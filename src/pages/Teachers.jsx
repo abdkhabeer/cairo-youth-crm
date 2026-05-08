@@ -4,7 +4,6 @@ import { useApp } from '../context/AppContext'
 const EMPTY = { name: '', subject: 'Both', email: '', phone: '', notes: '' }
 const SUBJECTS = ['Arabic', 'Quran', 'Both']
 
-
 function TeacherModal({ teacher, onClose }) {
   const { addTeacher, updateTeacher } = useApp()
   const [form, setForm] = useState(teacher ? { ...teacher } : { ...EMPTY })
@@ -24,9 +23,7 @@ function TeacherModal({ teacher, onClose }) {
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md border border-gray-300 dark:border-gray-700">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-300 dark:border-gray-800">
           <h2 className="text-base font-semibold text-gray-900 dark:text-white">{isEdit ? 'Edit Teacher' : 'Add Teacher'}</h2>
-          <button onClick={onClose} className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 text-lg leading-none">
-            ✕
-          </button>
+          <button onClick={onClose} className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 text-lg leading-none">✕</button>
         </div>
         <div className="p-6 space-y-4">
           <div>
@@ -64,9 +61,78 @@ function TeacherModal({ teacher, onClose }) {
   )
 }
 
+function TeacherDetailModal({ teacher: t, students, onClose, onEdit }) {
+  const assigned = students.filter(s => s.teacherId === t.id)
+  const active   = assigned.filter(s => s.status !== 'Departed')
+
+  const Row = ({ label, value }) => value ? (
+    <div>
+      <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">{label}</p>
+      <p className="text-sm text-gray-800 dark:text-gray-200 mt-0.5">{value}</p>
+    </div>
+  ) : null
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto border border-gray-300 dark:border-gray-700">
+
+        <div className="flex items-start justify-between p-6 pb-4 border-b border-gray-300 dark:border-gray-800">
+          <div>
+            <h2 className="font-bold text-gray-900 dark:text-white text-lg">{t.name}</h2>
+            <p className="text-xs text-gray-400 mt-0.5">{t.subject}</p>
+          </div>
+          <button onClick={onClose} className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 text-lg leading-none">✕</button>
+        </div>
+
+        <div className="px-6 py-5 space-y-5">
+          <div className="grid grid-cols-2 gap-4">
+            <Row label="Email"   value={t.email} />
+            <Row label="Phone"   value={t.phone} />
+            <Row label="Subject" value={t.subject} />
+          </div>
+
+          {t.notes && (
+            <div className="border-t border-gray-100 dark:border-gray-800 pt-4">
+              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Notes</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{t.notes}</p>
+            </div>
+          )}
+
+          <div className="border-t border-gray-100 dark:border-gray-800 pt-4">
+            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3">
+              Students ({active.length} active · {assigned.length} total)
+            </p>
+            {assigned.length === 0 ? (
+              <p className="text-xs text-gray-400">No students assigned.</p>
+            ) : (
+              <div className="space-y-2">
+                {assigned.map(s => (
+                  <div key={s.id} className="flex items-center justify-between py-1.5 border-b border-gray-50 dark:border-gray-800/50 last:border-0">
+                    <div>
+                      <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{s.name}</p>
+                      <p className="text-xs text-gray-400">{s.levelOfStudy} · {s.typeOfStudies}</p>
+                    </div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">{s.status}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button onClick={onClose} className="flex-1 btn-secondary justify-center">Close</button>
+            <button onClick={onEdit}  className="flex-1 btn-primary justify-center">Edit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function Teachers({ search }) {
   const { teachers, students, deleteTeacher } = useApp()
-  const [modal, setModal]       = useState(null)
+  const [modal, setModal]           = useState(null)
+  const [viewModal, setView]        = useState(null)
   const [confirmDel, setConfirmDel] = useState(null)
 
   const enriched = useMemo(() =>
@@ -90,10 +156,10 @@ export default function Teachers({ search }) {
         {enriched.map(t => (
           <div key={t.id} className="card p-5 flex flex-col gap-4 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between">
-              <div>
-                <p className="font-semibold text-gray-900 dark:text-white text-sm">{t.name}</p>
+              <button onClick={() => setView(t)} className="text-left group/name">
+                <p className="font-semibold text-gray-900 dark:text-white text-sm group-hover/name:text-primary-600 dark:group-hover/name:text-primary-400 group-hover/name:underline transition-colors">{t.name}</p>
                 <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 block">{t.subject}</span>
-              </div>
+              </button>
               <div className="flex gap-1">
                 <button onClick={() => setModal(t)}
                   className="px-2.5 py-1 rounded-md text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
@@ -122,6 +188,15 @@ export default function Teachers({ search }) {
       </div>
 
       {modal && <TeacherModal teacher={modal === 'add' ? null : modal} onClose={() => setModal(null)} />}
+
+      {viewModal && (
+        <TeacherDetailModal
+          teacher={viewModal}
+          students={students}
+          onClose={() => setView(null)}
+          onEdit={() => { setModal(viewModal); setView(null) }}
+        />
+      )}
 
       {confirmDel && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">

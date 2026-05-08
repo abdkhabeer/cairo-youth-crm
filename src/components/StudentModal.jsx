@@ -14,6 +14,14 @@ const TAB_IDS  = ['basic', 'studies', 'payment']
 const LEVELS   = ['Beginner', 'Elementary', 'Intermediate', 'Advanced', 'Graduate']
 const STATUSES = ['Paid in Full', 'Next Payment Due', 'Partial', 'Payment Needed', 'Scholarship']
 
+const F = ({ label, error, children }) => (
+  <div>
+    <label className="label">{label}</label>
+    {children}
+    {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+  </div>
+)
+
 export default function StudentModal({ student, onClose }) {
   const { addStudent, updateStudent, teachers } = useApp()
   const [form, setForm] = useState(student ? { ...student } : { ...EMPTY })
@@ -58,14 +66,6 @@ export default function StudentModal({ student, onClose }) {
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [onClose])
-
-  const F = ({ label, error, children }) => (
-    <div>
-      <label className="label">{label}</label>
-      {children}
-      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
-    </div>
-  )
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">

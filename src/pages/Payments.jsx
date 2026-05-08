@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { useApp } from '../context/AppContext'
+import StudentDetailModal from '../components/StudentDetailModal'
 
 
 const ALL_STATUSES = ['All', 'Payment Needed', 'Next Payment Due', 'Partial', 'Paid in Full', 'Scholarship']
@@ -7,6 +8,7 @@ const ALL_STATUSES = ['All', 'Payment Needed', 'Next Payment Due', 'Partial', 'P
 export default function Payments({ search }) {
   const { students, exportCSV } = useApp()
   const [filter, setFilter] = useState('All')
+  const [selectedStudent, setSelectedStudent] = useState(null)
 
   const today = new Date()
 
@@ -37,6 +39,7 @@ export default function Payments({ search }) {
     (s.paymentStatus === 'Payment Needed' || s.paymentStatus === 'Next Payment Due' || s.paymentStatus === 'Partial')
 
   return (
+    <>
     <div className="space-y-6">
       {/* Summary cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -93,8 +96,10 @@ export default function Payments({ search }) {
                 return (
                   <tr key={s.id} className={`hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${overdue ? 'bg-red-50/30 dark:bg-red-900/5' : ''}`}>
                     <td className="px-4 py-3">
-                      <p className="font-medium text-gray-900 dark:text-white whitespace-nowrap">{s.name}</p>
-                      <p className="text-[11px] text-gray-400 mt-0.5">{s.status}</p>
+                      <button onClick={() => setSelectedStudent(s)} className="text-left group/name">
+                        <p className="font-medium text-gray-900 dark:text-white whitespace-nowrap group-hover/name:text-primary-600 dark:group-hover/name:text-primary-400 group-hover/name:underline transition-colors">{s.name}</p>
+                        <p className="text-[11px] text-gray-400 mt-0.5">{s.status}</p>
+                      </button>
                     </td>
                     <td className="px-4 py-3">
                       <span className="text-xs text-gray-600 dark:text-gray-400">{s.paymentStatus}</span>
@@ -132,5 +137,10 @@ export default function Payments({ search }) {
         </div>
       </div>
     </div>
+
+    {selectedStudent && (
+      <StudentDetailModal student={selectedStudent} onClose={() => setSelectedStudent(null)} />
+    )}
+    </>
   )
 }

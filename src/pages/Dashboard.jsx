@@ -1,6 +1,6 @@
-import React from 'react'
-
+import React, { useState } from 'react'
 import { useApp } from '../context/AppContext'
+import StudentDetailModal from '../components/StudentDetailModal'
 
 const StatCard = ({ label, value, sub, onClick }) => (
   <div
@@ -29,6 +29,7 @@ const STATUS_COLORS = {
 
 export default function Dashboard() {
   const { students, setActivePage } = useApp()
+  const [selectedStudent, setSelectedStudent] = useState(null)
 
   const active   = students.filter(s => s.status === 'Active').length
   const upcoming = students.filter(s => s.status === 'Upcoming').length
@@ -52,6 +53,7 @@ export default function Dashboard() {
     .slice(0, 4)
 
   return (
+    <>
     <div className="space-y-6">
       {/* Stats grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -85,10 +87,10 @@ export default function Dashboard() {
           <div className="space-y-2">
             {recent.map(s => (
               <div key={s.id} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{s.name}</p>
+                <button onClick={() => setSelectedStudent(s)} className="flex-1 min-w-0 text-left group/name">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate group-hover/name:text-primary-600 dark:group-hover/name:text-primary-400 group-hover/name:underline transition-colors">{s.name}</p>
                   <p className="text-xs text-gray-400">{s.hometown || '—'}</p>
-                </div>
+                </button>
                 <span className="text-xs text-gray-500 dark:text-gray-400">{s.typeOfStudies}</span>
                 <span className="text-xs text-gray-500 dark:text-gray-400">{s.paymentStatus}</span>
               </div>
@@ -152,5 +154,10 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+
+    {selectedStudent && (
+      <StudentDetailModal student={selectedStudent} onClose={() => setSelectedStudent(null)} />
+    )}
+    </>
   )
 }
