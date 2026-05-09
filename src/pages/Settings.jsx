@@ -79,7 +79,7 @@ export default function Settings() {
         <Section title="Program Info">
           <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
             {[
-              ['Program',   'Cairo Youth Program'],
+              ['Program',   'Shababunaa Academy'],
               ['Location',  'Cairo, Egypt'],
               ['Students',  students.length],
               ['Teachers',  teachers.length],
@@ -88,9 +88,9 @@ export default function Settings() {
               ['Departed',  departed],
               ['Revenue',   `$${totalCollected.toLocaleString()}`],
             ].map(([label, value]) => (
-              <div key={label} className="flex justify-between py-1.5 border-b border-gray-50 dark:border-gray-800/50">
-                <span className="text-gray-500 dark:text-gray-400">{label}</span>
-                <span className="font-medium text-gray-900 dark:text-white">{value}</span>
+              <div key={label} className="flex items-baseline gap-2 py-1.5 border-b border-gray-50 dark:border-gray-800/50">
+                <span className="text-gray-500 dark:text-gray-400 shrink-0 w-20">{label}</span>
+                <span className="font-medium text-gray-900 dark:text-white text-right flex-1">{value}</span>
               </div>
             ))}
           </div>

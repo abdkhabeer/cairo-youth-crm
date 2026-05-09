@@ -16,7 +16,7 @@ export default function Sidebar() {
     <aside className="fixed left-0 top-0 h-screen w-60 bg-white dark:bg-gray-900 border-r border-gray-300 dark:border-gray-800 flex flex-col z-20">
       {/* Logo */}
       <div className="px-5 py-5 border-b border-gray-300 dark:border-gray-800">
-        <p className="text-sm font-bold text-gray-900 dark:text-white leading-tight">Cairo Youth</p>
+        <p className="text-sm font-bold text-gray-900 dark:text-white leading-tight">Shababunaa Academy</p>
         <p className="text-[11px] text-gray-400 dark:text-gray-500 leading-tight mt-0.5">Program CRM</p>
       </div>
 
@@ -43,7 +43,7 @@ export default function Sidebar() {
       {/* Footer */}
       <div className="px-5 py-4 border-t border-gray-300 dark:border-gray-800">
         <p className="text-xs font-semibold text-gray-900 dark:text-gray-100">Admin</p>
-        <p className="text-[11px] text-gray-400 mt-0.5">Cairo Youth Program</p>
+        <p className="text-[11px] text-gray-400 mt-0.5">Shababunaa Academy</p>
       </div>
     </aside>
   )
